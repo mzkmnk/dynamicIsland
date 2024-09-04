@@ -46,7 +46,7 @@ export default tsEslint.config(
       "@stylistic/object-property-newline": "error",
       "@stylistic/array-bracket-newline": [
         "error",
-        { multiline: true, minItems: 1 },
+        { multiline: true, minItems: 2 },
       ],
       "@stylistic/brace-style": [
         "error",
@@ -72,7 +72,7 @@ export default tsEslint.config(
           },
         },
       ],
-      "@stylistic/max-len": ["error", { code: 80, ignoreComments: true }],
+      "@stylistic/max-len": ["error", { code: 120, ignoreComments: true }],
       "@stylistic/multiline-ternary": ["error", "always"],
     },
   },

@@ -4,7 +4,7 @@ import {
   signal,
   ViewChild,
   AfterViewInit,
-  WritableSignal,
+  WritableSignal, effect,
 } from '@angular/core';
 import {
   IonHeader,
@@ -18,21 +18,29 @@ import { animate as PopMotionAnimation } from 'popmotion';
 @Component({
   selector    : 'app-home',
   templateUrl : 'home.page.html',
-  styleUrls   : [
-    'home.page.scss' 
-  ],
-  standalone : true,
-  imports    : [
-    IonHeader, IonToolbar, IonTitle, IonContent 
+  styleUrls   : [ 'home.page.scss' ],
+  standalone  : true,
+  imports     : [
+    IonHeader, IonToolbar, IonTitle, IonContent
   ],
 })
-export class HomePage implements AfterViewInit {
+export class HomePageComponent implements AfterViewInit {
   $dynamicIslandIsOpen: WritableSignal<boolean> = signal<boolean>(false);
 
-  @ViewChild('dynamicIsland') dynamicIsland?: ElementRef;
+  @ViewChild('dynamicIsland') dynamicIsland?: ElementRef; // オプショナルプロパティ
 
   private styler?           : Styler;
-  private defaultDimensions : any;
+  private defaultDimensions : any; // todo 型定義
+
+  constructor() {
+    effect(() => ((isOpen:boolean):void => {
+      if(isOpen){
+        this.openDynamicIsland()
+      }else{
+        this.closeDynamicIsland()
+      }
+    })(this.$dynamicIslandIsOpen()))
+  }
 
   ngAfterViewInit(): void {
     this.styler = styler(this.dynamicIsland?.nativeElement);
@@ -45,25 +53,19 @@ export class HomePage implements AfterViewInit {
 
   onClickDynamicIsland(): void {
     this.$dynamicIslandIsOpen.update((value) => !value);
-    this.$dynamicIslandIsOpen()
-      ? this.openDynamicIsland()
-      : this.closeDynamicIsland();
   }
 
   openDynamicIsland(): void {
     PopMotionAnimation({
       from : JSON.stringify(this.defaultDimensions),
-      to   : JSON.stringify({ borderRadius : 25,
-        width        : 400,
-        height       : 150 }),
-      duration : 400,
+      to   : JSON.stringify({
+        borderRadius : 25,
+        width        : 350,
+        height       : 100,
+      }),
+      duration : 250,
       type     : 'spring',
-      onUpdate : (latest) => {
-        const latestFormatted = JSON.parse(latest);
-        this.styler?.set('borderRadius', `${latestFormatted.borderRadius}px`);
-        this.styler?.set('width', `${latestFormatted.width}px`);
-        this.styler?.set('height', `${latestFormatted.height}px`);
-      },
+      onUpdate : (latest: string): void => this.getStyle(latest),
     });
   }
 
@@ -75,14 +77,23 @@ export class HomePage implements AfterViewInit {
         height       : this.styler?.get('height'),
       }),
       to       : JSON.stringify(this.defaultDimensions),
-      duration : 400,
+      duration : 250,
       type     : 'spring',
-      onUpdate : (latest: string): void => {
-        const latestFormatted = JSON.parse(latest);
-        this.styler?.set('borderRadius', `${latestFormatted.borderRadius}px`);
-        this.styler?.set('width', `${latestFormatted.width}px`);
-        this.styler?.set('height', `${latestFormatted.height}px`);
-      },
+      onUpdate : (latest: string): void => this.getStyle(latest),
     });
   }
+
+  getStyle = (latest: string): void => {
+    const parsedJSON = JSON.parse(latest);
+    const [
+      borderRadius, width, height
+    ] = [
+      parsedJSON.borderRadius,
+      parsedJSON.width,
+      parsedJSON.height,
+    ];
+    this.styler?.set('borderRadius', `${borderRadius}px`);
+    this.styler?.set('width', `${width}px`);
+    this.styler?.set('height', `${height}px`);
+  };
 }
