@@ -9,4 +9,4 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
     IonApp, IonRouterOutlet 
   ],
 })
-export class AppComponent {}
+export class AppComponent {} //eslint-disable-line

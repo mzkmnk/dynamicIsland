@@ -10,6 +10,9 @@ export default tsEslint.config(
   eslintConfigPrettier,
   // eslint typescript-eslint recommended config
   {
+    ignores: ["**/ios/**"],
+  },
+  {
     files: ["**/*.ts"],
     languageOptions: {
       parser: tsEslint.parser,
@@ -40,9 +43,10 @@ export default tsEslint.config(
       "@stylistic/array-bracket-spacing": ["error", "always"],
       "@stylistic/arrow-spacing": "error",
       "@stylistic/block-spacing": "error",
+      "@stylistic/object-property-newline": "error",
       "@stylistic/array-bracket-newline": [
         "error",
-        { multiline: true, minItems: 2 },
+        { multiline: true, minItems: 1 },
       ],
       "@stylistic/brace-style": [
         "error",
