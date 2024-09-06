@@ -2,9 +2,8 @@ import {
   Component,
   ElementRef,
   signal,
-  ViewChild,
   AfterViewInit,
-  WritableSignal, effect,
+  WritableSignal, effect, viewChild,
 } from '@angular/core';
 import {
   IonHeader,
@@ -27,9 +26,10 @@ import { animate as PopMotionAnimation } from 'popmotion';
 export class HomePageComponent implements AfterViewInit {
   $dynamicIslandIsOpen: WritableSignal<boolean> = signal<boolean>(false);
 
-  @ViewChild('dynamicIsland') dynamicIsland?: ElementRef; // オプショナルプロパティ
+  dynamicIsland$ = viewChild<ElementRef>('dynamicIsland')
 
   private styler?           : Styler;
+  // eslint-disable-next-line
   private defaultDimensions : any; // todo 型定義
 
   constructor() {
@@ -43,7 +43,7 @@ export class HomePageComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.styler = styler(this.dynamicIsland?.nativeElement);
+    this.styler = styler(this.dynamicIsland$()?.nativeElement);
     this.defaultDimensions = {
       borderRadius : this.styler.get('borderRadius'),
       width        : this.styler.get('width'),
